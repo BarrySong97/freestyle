@@ -1,0 +1,25 @@
+{
+  "name": "freestyle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "build": "island build docs",
+    "preview": "island start docs"
+  },
+  "bin": {
+    "freestyle": "./bin/freestyle.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.2.4",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.8"
+  },
+  "dependencies": {
+    "cac": "^6.7.14"
+  }
+}
