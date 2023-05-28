@@ -1,9 +1,7 @@
-import { join } from "path";
-import { build as viteBuild, InlineConfig } from "vite";
-import type { RollupOutput } from "rollup";
-import pluginReact from "@vitejs/plugin-react";
-import * as fs from "fs-extra";
-import { log } from "console";
+import { join } from 'path';
+import { build as viteBuild, InlineConfig } from 'vite';
+import type { RollupOutput } from 'rollup';
+import * as fs from 'fs-extra';
 
 export async function renderPage(
   render: () => string,
@@ -11,9 +9,8 @@ export async function renderPage(
   clientBundle: RollupOutput
 ) {
   const clientChunk = clientBundle.output.find(
-    (chunk) => chunk.type === "chunk" && chunk.isEntry
+    (chunk) => chunk.type === 'chunk' && chunk.isEntry
   );
-  console.log(`Rendering page in server side...`);
   const appHtml = render();
   const html = `
 <!DOCTYPE html>
@@ -29,42 +26,42 @@ export async function renderPage(
     <script type="module" src="/${clientChunk?.fileName}"></script>
   </body>
 </html>`.trim();
-  await fs.ensureDir(join(root, "build"));
-  await fs.writeFile(join(root, "build/index.html"), html);
-  await fs.remove(join(root, ".temp"));
+  await fs.ensureDir(join(root, 'build'));
+  await fs.writeFile(join(root, 'build/index.html'), html);
+  await fs.remove(join(root, '.temp'));
 }
 export async function build(root: string) {
   // 1. bundle
   console.log(root);
   const resolveViteConfig = (isServer: boolean): InlineConfig => ({
-    mode: "production",
+    mode: 'production',
     root,
     build: {
       ssr: isServer,
-      outDir: isServer ? ".temp" : "build",
+      outDir: isServer ? '.temp' : 'build',
       rollupOptions: {
-        input: join(root, "/src/main.tsx"),
+        input: join(root, '/src/main.tsx'),
         output: isServer
           ? {
-              format: "cjs",
-              entryFileNames: "[name].cjs",
+              format: 'cjs',
+              entryFileNames: '[name].cjs'
             }
           : {
-              format: "esm",
-            },
-      },
-    },
+              format: 'esm'
+            }
+      }
+    }
   });
   try {
     const [clientBundle] = (await Promise.all([
       // client build
       viteBuild(resolveViteConfig(false)),
-      viteBuild(resolveViteConfig(true)),
+      viteBuild(resolveViteConfig(true))
     ])) as [RollupOutput, RollupOutput];
-    const serverEntryPath = join(root, ".temp", "main.cjs");
-    const { createSSG } = require(serverEntryPath);
+    const serverEntryPath = join(root, '.temp', 'main.cjs');
+    const { createSSG } = await import(serverEntryPath);
 
-    // // 3. 服务端渲染，产出 HTML
+    // // // 3. 服务端渲染，产出 HTML
     await renderPage(createSSG, root, clientBundle);
   } catch (error) {
     console.log(error);
