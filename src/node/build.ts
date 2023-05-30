@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { build as viteBuild, InlineConfig } from 'vite';
+import { build as viteBuild, InlineConfig, resolveConfig } from 'vite';
 import type { RollupOutput } from 'rollup';
 import * as fs from 'fs-extra';
 
@@ -32,10 +32,20 @@ export async function renderPage(
 }
 export async function build(root: string) {
   // 1. bundle
-  console.log(root);
+  const config = await resolveConfig(
+    {
+      configFile: join(root, 'vite.config.ts')
+    },
+    'build',
+    'production'
+  );
   const resolveViteConfig = (isServer: boolean): InlineConfig => ({
     mode: 'production',
     root,
+    ssr: {
+      // 注意加上这个配置，防止 cjs 产物中 require ESM 的产物，因为 react-router-dom 的产物为 ESM 格式
+      noExternal: ['react-router-dom']
+    },
     build: {
       ssr: isServer,
       outDir: isServer ? '.temp' : 'build',
@@ -52,6 +62,7 @@ export async function build(root: string) {
       }
     }
   });
+  const ssgOption = config?.ssgOptions;
   try {
     const [clientBundle] = (await Promise.all([
       // client build

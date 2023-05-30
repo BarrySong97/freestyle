@@ -1,25 +1,31 @@
+import { BrowserRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
 import App from "./App.tsx";
 import { createRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import "./index.css";
-
-function createClientApp(App: JSX.Element) {
+function createClientApp() {
+  
   const containerEl = document.getElementById("root");
   if (!containerEl) {
     throw new Error("#root element not found");
   }
-  createRoot(containerEl).render(App);
+  createRoot(containerEl).render(
+     <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  )
   return "client";
 }
 
-export function createSSRApp(App: JSX.Element) {
-  return renderToString(App);
+export function createSSRApp() {
+  return renderToString(<StaticRouter location={'/'}><App /></StaticRouter>);
 }
 
-export function createSSG(App: JSX.Element) {
+export function createSSG() {
   const isClient = typeof window !== "undefined";
-  const output = isClient ? createClientApp(App) : createSSRApp(App);
+  const output = isClient ? createClientApp() : createSSRApp();
   return output;
 }
 
-createSSG(<App />);
+createSSG();

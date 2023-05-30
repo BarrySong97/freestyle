@@ -1,10 +1,11 @@
 {
   "name": "freestyle",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "react ssg generator using vite",
   "main": "index.js",
   "scripts": {
     "dev": "tsup --watch",
+    "test:init": "vitest --ui",
     "build": "tsup",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx ./",
     "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx --quiet ./",
@@ -24,12 +25,14 @@
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
+    "@loadable/component": "^5.15.3",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^18.11.7",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
+    "@vitest/ui": "^0.31.1",
     "commitlint": "^17.2.0",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
@@ -42,15 +45,32 @@
     "rollup": "^3.2.3",
     "serve": "^14.0.1",
     "tsup": "^6.5.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "vitest": "^0.31.1"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^2.2.0",
     "cac": "^6.7.14",
+    "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
     "ora": "^6.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^3.2.1"
+    "react-router-dom": "^6.11.2",
+    "vite": "^4.3.9"
+  },
+  "exports": {
+    ".": {
+      "types": "./types.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./client-react": {
+      "types": "./routes.d.ts"
+    }
   }
 }
